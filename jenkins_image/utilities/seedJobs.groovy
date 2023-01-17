@@ -7,33 +7,29 @@ freeStyleJob('devops/seedJobs') {
     }
     triggers {
         hudsonStartupTrigger {
-            quietPeriod('5')
+            quietPeriod('10')
             runOnChoice('ON_CONNECT')
             label('built-in')
             nodeParameterName('')
         }
+        githubPush()
     }
     parameters {
         gitParameter {
             name('BRANCH')
-            defaultValue('master')
-            type('PT_BRANCH_TAG')
+            defaultValue('main')
+            type('Branch')
             branch('')
-            branchFilter('origin/(.)')
+            branchFilter('origin/(.*)')
             tagFilter('')
-            sortMode('DESCENDING_SMART')
+            sortMode('ASCENDING_SMART')
             selectedValue('NONE')
             useRepository('')
             quickFilterEnabled(true)
         }
     }
     scm {
-        git {
-            remote {
-                github('filenkoB/devops', 'https')
-            }
-            branches('${BRANCH}')
-        }
+        github('filenkoB/devops', '${BRANCH}', 'https')
     }
     steps {
         dsl {

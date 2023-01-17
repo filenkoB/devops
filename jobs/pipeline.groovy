@@ -1,14 +1,19 @@
-pipelineJob('devops/pipeline-job') {
-    displayName('devops-pipeline')
+pipelineJob('devops/develop-pipeline') {
+    displayName('develop-pipeline')
+
+    triggers {
+        githubPush()
+    }
+
     parameters{
         gitParameter{
             name('GIT_BRANCH')
             defaultValue('develop')
-            type('PT_BRANCH_TAG')
+            type('Branch')
             branch('')
-            branchFilter('origin/(.)')
+            branchFilter('origin/(.*)')
             tagFilter('')
-            sortMode('DESCENDING_SMART')
+            sortMode('ASCENDING_SMART')
             selectedValue('NONE')
             useRepository('')
             quickFilterEnabled(true)
@@ -17,12 +22,7 @@ pipelineJob('devops/pipeline-job') {
     definition {
         cpsScm {
             scm {
-                git {
-                    remote {
-                        github('filenkoB/Kanbanizer')
-                    }
-                    branches('${GIT_BRANCH}')
-                }
+                github('filenkoB/Kanbanizer', '${GIT_BRANCH}', 'https')
             }
             scriptPath('Jenkinsfile')
         }

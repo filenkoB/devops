@@ -17,7 +17,14 @@ freeStyleJob('devops/seedJobs') {
         gitParameter {
             name('BRANCH')
             defaultValue('master')
-            type(gitType)
+            type('PT_BRANCH_TAG')
+            branch('')
+            branchFilter('origin/(.)')
+            tagFilter('')
+            sortMode('DESCENDING_SMART')
+            selectedValue('NONE')
+            useRepository('')
+            quickFilterEnabled(true)
         }
     }
     scm {

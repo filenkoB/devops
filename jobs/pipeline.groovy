@@ -5,6 +5,13 @@ pipelineJob('devops/pipeline-job') {
             name('GIT_BRANCH')
             defaultValue('develop')
             type('PT_BRANCH_TAG')
+            branch('')
+            branchFilter('origin/(.)')
+            tagFilter('')
+            sortMode('DESCENDING_SMART')
+            selectedValue('NONE')
+            useRepository('')
+            quickFilterEnabled(true)
         }
     }
     definition {

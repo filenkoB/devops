@@ -1,4 +1,13 @@
 jenkins:
+  globalNodeProperties:
+  - envVars:
+      env:
+        - key: AWS_DEFAULT_REGION
+          value: us-east-1
+        - key: AWS_ACCESS_KEY_ID
+          value: ${AWS_ACCESS_KEY_ID}
+        - key: AWS_SECRET_ACCESS_KEY
+          value: ${AWS_SECRET_ACCESS_KEY}
   securityRealm:
     local:
       allowsSignup: false

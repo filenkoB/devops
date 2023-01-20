@@ -9,15 +9,45 @@ terraform {
     required_version = ">= 0.12"
 }
 
+variable "aws_access_key" {
+  type = string
+}
+
+variable "aws_secret_key" {
+  type = string
+}
+
+variable "ssh_key_path" {
+  type = string
+}
+
+
+data "aws_iam_policy_document" "s3_user_pol_doc" {
+  statement {
+    effect = "Allow"
+    actions = [ "s3:*" ]
+    resources = [ "*" ]
+  }
+}
+
+data "aws_iam_policy_document" "s3_bucket_pol_data" {
+  statement {
+    effect = "Allow"
+    principal = "*"
+    actions = [ "s3:GetObject" ]
+    resources = [ "arn:aws:s3:::filenko-devops-s3/*" ]
+  }
+}
+
 provider "aws" {
-    access_key = ""
-    secret_key = ""
+    access_key = var.aws_access_key
+    secret_key = var.aws_secret_key
     region  = "us-east-1"
 }
 
 resource "aws_key_pair" "devops_kp" {
     key_name = "devops-key"
-    public_key = file("~/.ssh/id_rsa.pub")
+    public_key = file(var.ssh_key_path)
 
     tags = {
         Name = "Devops-Key-Pair"
@@ -70,5 +100,37 @@ resource "aws_instance" "devops_instance" {
         Name = "Devops-Instance"
     }    
 
-    user_data = file("./user_data.sh")
+    user_data = file(var.ssh_key_path)
+}
+
+resource "aws_s3_bucket" "filenko-devops-s3" {
+    bucket = "filenko-devops-s3"
+    acl = "private"
+}
+
+resource "aws_s3_bucket_policy" "s3_bucket_pol" {
+    bucket = aws_s3_bucket.filenko-devops-s3.id
+    policy = data.aws_iam_policy_document.s3_bucket_pol_data.json
+}
+
+resource "aws_s3_bucket_website_configuration" "s3_bucket_website_config" {
+    bucket = aws_s3_bucket.filenko-devops-s3.id
+    index_document = {
+      suffix = "index.html"
+    }
+}
+
+resource "aws_iam_user" "s3_user" {
+    name = "s3_user"
+
+    tags = {
+        Name = "S3-User"
+    }
+}
+
+resource "aws_iam_user_policy" "s3_user_pol" {
+    name = "s3_user_pol"
+    user = aws_iam_user.s3_user.name
+
+    policy = "${data.aws_iam_policy_document.s3_user_pol_doc.json}"
 }

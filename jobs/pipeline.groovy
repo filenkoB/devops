@@ -23,7 +23,7 @@ pipelineJob('devops/develop-pipeline') {
     definition {
         cpsScm {
             scm {
-                github('filenkoB/Kanbanizer', '${GIT_BRANCH}', 'https')
+                github('filenkoB/homepage', '${GIT_BRANCH}', 'https')
             }
             scriptPath('Jenkinsfile')
         }

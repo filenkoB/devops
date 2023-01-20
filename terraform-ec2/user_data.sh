@@ -11,9 +11,11 @@ apt-get update
 apt-get install -y docker-ce
 usermod -aG docker ubuntu
 
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
 # Run Jenkins docker instance
-mkdir ~/jenkins_storage
-sudo chown -R 1000:1000 ~/jenkins_storage
 
 docker pull bogdanfilenko/jenkins-devops:lts
-docker run --name jenkins_server -d -p 8080:8080 -p 50000:50000 --env JENKINS_ADMIN_ID=admin --env JENKINS_ADMIN_PASSWORD=admin -v ~/jenkins_storage:/var/jenkins_home bogdanfilenko/jenkins-devops:lts
+docker run --name jenkins_server -d -p 8080:8080 --env JENKINS_ADMIN_ID=admin --env JENKINS_ADMIN_PASSWORD=admin \
+   --env AWS_ACCESS_KEY_ID=AKIA3QISMVTKEYAQZ3IK --env AWS_SECRET_ACCESS_KEY=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 bogdanfilenko/jenkins-devops:lts

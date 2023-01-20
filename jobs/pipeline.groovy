@@ -4,25 +4,10 @@ pipelineJob('devops/develop-pipeline') {
     triggers {
         githubPush()
     }
-
-    parameters{
-        gitParameter{
-            name('GIT_BRANCH')
-            defaultValue('develop')
-            type('Branch')
-            branch('')
-            branchFilter('origin/(.*)')
-            tagFilter('')
-            sortMode('ASCENDING_SMART')
-            selectedValue('NONE')
-            useRepository('')
-            quickFilterEnabled(true)
-        }
-    }
     definition {
         cpsScm {
             scm {
-                github('filenkoB/homepage', '${GIT_BRANCH}', 'https')
+                github('filenkoB/homepage', 'develop', 'https')
             }
             scriptPath('Jenkinsfile')
         }

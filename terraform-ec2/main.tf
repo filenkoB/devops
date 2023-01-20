@@ -21,7 +21,6 @@ variable "ssh_key_path" {
   type = string
 }
 
-
 data "aws_iam_policy_document" "s3_user_pol_doc" {
   statement {
     effect = "Allow"
@@ -32,8 +31,11 @@ data "aws_iam_policy_document" "s3_user_pol_doc" {
 
 data "aws_iam_policy_document" "s3_bucket_pol_data" {
   statement {
+    principals {
+      type = "*"
+      identifiers = ["*"]
+    }
     effect = "Allow"
-    principal = "*"
     actions = [ "s3:GetObject" ]
     resources = [ "arn:aws:s3:::filenko-devops-s3/*" ]
   }
@@ -75,7 +77,7 @@ resource "aws_security_group" "devops_sg" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["78.25.4.218/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -100,7 +102,7 @@ resource "aws_instance" "devops_instance" {
         Name = "Devops-Instance"
     }    
 
-    user_data = file(var.ssh_key_path)
+    user_data = file("./user_data.sh")
 }
 
 resource "aws_s3_bucket" "filenko-devops-s3" {
@@ -115,7 +117,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_pol" {
 
 resource "aws_s3_bucket_website_configuration" "s3_bucket_website_config" {
     bucket = aws_s3_bucket.filenko-devops-s3.id
-    index_document = {
+    index_document {
       suffix = "index.html"
     }
 }

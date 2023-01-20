@@ -3,7 +3,6 @@ pipelineJob('devops/develop-pipeline') {
 
     triggers {
         githubPush()
-        upstream('devops/seedJobs')
     }
 
     parameters{
